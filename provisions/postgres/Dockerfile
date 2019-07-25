@@ -1,23 +1,19 @@
-FROM ubuntu:14.04
+FROM wtanaka/ubuntu-1604-oracle-java-8
 
-# Install java and other utils
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y software-properties-common && \
-    add-apt-repository ppa:webupd8team/java -y && \
-    apt-get update && \
-    echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections && \
-    apt-get install -y oracle-java8-installer && \
-    apt-get install -y curl && \
-    apt-get install -y netcat && \
-    apt-get install -y iputils-ping && \
-    apt-get install -y net-tools && \
-    apt-get clean
+# Install utils
+
+RUN \
+	apt-get update && \
+	apt-get install -y curl && \
+	apt-get install -y netcat && \
+	apt-get install -y iputils-ping && \
+	apt-get install -y net-tools && \
+	apt-get install wget
 
 # Install postgres 9.4
 RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main" > /etc/apt/sources.list.d/pgdg.list  && \
-	wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - && \
-	sudo apt-get update && \
+	wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
+	apt-get update && \
 	apt-get install -y postgresql-9.4 && \
 	psql --version && \
 	apt-get update && \
@@ -43,6 +39,8 @@ RUN /etc/init.d/postgresql start &&\
 COPY start_services.sh /
 
 # Copy over build artifacts
+# Getting ParserTerms: cp src/main/resources/{PostgresParserTerms.csv,SciDBParserTerms.csv} provisions/postgres/
+# Getting jar: mvn package -P mit -DskipTests -f pom.xml && cp target/istc.bigdawg-1.0-SNAPSHOT-jar-with-dependencies.jar provisions/postgres/
 COPY PostgresParserTerms.csv /src/main/resources/PostgresParserTerms.csv
 COPY SciDBParserTerms.csv /src/main/resources/SciDBParserTerms.csv
 COPY istc.bigdawg-1.0-SNAPSHOT-jar-with-dependencies.jar /
