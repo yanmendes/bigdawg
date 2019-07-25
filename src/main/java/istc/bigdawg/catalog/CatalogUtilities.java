@@ -152,9 +152,14 @@ public class CatalogUtilities {
 			parenlevel++;
 			if (phase == CatalogParsingPhases.unstarted) 
 				phase = CatalogParsingPhases.command;
+			else
+				temp.append(token);
 			break;
 		case ')':
 			parenlevel--;
+			if (parenlevel > 0) {
+				temp.append(token);
+			}
 			break;
 		case '\'':
 			quotedEh = !quotedEh;			
