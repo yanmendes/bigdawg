@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # This script does the following:
-# 	- docker initialization: creates the "bigdawg" docker network if not already created
+# 	- docker initialization: creates the "polyflow" docker network if not already created
 # 	- image pull: pulls postgres base image from dockerhub
 # 	- container run: runs the above containers
 # 	- data prep: download and insert data into running containers
@@ -14,7 +14,7 @@ echo
 echo "=============================================================="
 echo "===== Creating the bigdawg docker network if not present ====="
 echo "=============================================================="
-$(docker network inspect bigdawg &>/dev/null) || {   docker network create bigdawg; }
+$(docker network inspect polyflow &>/dev/null) || {   docker network create polyflow; }
 
 echo
 echo "========================================"
@@ -26,9 +26,9 @@ echo
 echo "============================="
 echo "===== Running containers====="
 echo "============================="
-docker run -d -h bigdawg-postgres-catalog --net=bigdawg -p 5400:5400 -p 8080:8080 -e "PGPORT=5400" -e "BDHOST=bigdawg-postgres-catalog" --name bigdawg-postgres-catalog yanmendes/bigdawg-polyflow
-docker run -d -h bigdawg-postgres-kepler --net=bigdawg -p 5401:5401 -e "PGPORT=5401" -e "BDHOST=bigdawg-postgres-kepler" --name bigdawg-postgres-kepler yanmendes/bigdawg-polyflow
-docker run -d -h bigdawg-postgres-swift --net=bigdawg -p 5402:5402 -e "PGPORT=5402" -e "BDHOST=bigdawg-postgres-swift" --name bigdawg-postgres-swift yanmendes/bigdawg-polyflow
+docker run -d -h bigdawg-postgres-catalog --net=polyflow -p 5400:5400 -p 8080:8080 -e "PGPORT=5400" -e "BDHOST=bigdawg-postgres-catalog" --name bigdawg-postgres-catalog yanmendes/bigdawg-polyflow
+docker run -d -h bigdawg-postgres-kepler --net=polyflow -p 5401:5401 -e "PGPORT=5401" -e "BDHOST=bigdawg-postgres-kepler" --name bigdawg-postgres-kepler yanmendes/bigdawg-polyflow
+docker run -d -h bigdawg-postgres-swift --net=polyflow -p 5402:5402 -e "PGPORT=5402" -e "BDHOST=bigdawg-postgres-swift" --name bigdawg-postgres-swift yanmendes/bigdawg-polyflow
 
 echo
 echo "========================"
