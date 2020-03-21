@@ -6,9 +6,9 @@
 # 	- container run: runs the above containers
 # 	- data prep: download and insert data into running containers
 
-docker rm -f bigdawg-postgres-catalog
-docker rm -f bigdawg-postgres-swift
-docker rm -f bigdawg-postgres-kepler
+docker rm -f bigdawg-postgres-catalog &>/dev/null
+docker rm -f bigdawg-postgres-swift &>/dev/null
+docker rm -f bigdawg-postgres-kepler &>/dev/null
 
 echo
 echo "=============================================================="
