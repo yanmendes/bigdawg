@@ -6,6 +6,11 @@
 # 	- container run: runs the above containers
 # 	- data prep: download and insert data into running containers
 
+echo
+echo "========================================"
+echo "===== Cleaning up old containers ====="
+echo "========================================"
+
 docker rm -f bigdawg-postgres-catalog &>/dev/null
 docker rm -f bigdawg-postgres-swift &>/dev/null
 docker rm -f bigdawg-postgres-kepler &>/dev/null
@@ -35,49 +40,63 @@ echo "========================"
 echo "===== Loading data ====="
 echo "========================"
 
-# Download the swift dump
+# Download swift dump
 if [ -f "swift.dump" ]
 then
        echo "Swift dump already exists. Skipping download"
 else
-       echo "Downloading the swift dump"
-       curl -L -o swift.dump https://drive.google.com/uc?id=146L0rDu3U2jN4KM65YcfS-Ob1QYKaz3A
+       echo "Downloading swift dump"
+       curl -s -L -o swift.dump https://drive.google.com/uc?id=146L0rDu3U2jN4KM65YcfS-Ob1QYKaz3A
 fi
 
-# Download the Kepler dump
+# Download Kepler dump
 if [ -f "kepler.dump" ]
 then
        echo "Kepler dump already exists. Skipping download"
 else
-       echo "Downloading the kepler dump"
-       curl -L -o kepler.dump https://drive.google.com/uc?id=1c7nHHCfwqXcDtdhHNrdMPHe-cgxCW52N
+       echo "Downloading kepler dump"
+       curl -s -L -o kepler.dump https://drive.google.com/uc?id=1c7nHHCfwqXcDtdhHNrdMPHe-cgxCW52N
 fi
 
 # postgres-catalog
+echo
+echo "========================================"
+echo "===== Inserting catalog data ====="
+echo "========================================"
+echo
 docker exec -u root bigdawg-postgres-catalog mkdir -p /src/main/resources
 docker cp ../src/main/resources/PostgresParserTerms.csv bigdawg-postgres-catalog:/src/main/resources
 docker cp cluster_setup/polyflow-catalog/bdsetup bigdawg-postgres-catalog:/
-docker exec bigdawg-postgres-catalog /bdsetup/setup.sh
+docker exec bigdawg-postgres-catalog /bdsetup/setup.sh &>/dev/null
 
 # postgres-swift
+echo "========================================"
+echo "===== Inserting Swift data ====="
+echo "========================================"
+echo
 docker exec -u root bigdawg-postgres-swift mkdir -p /bdsetup
 docker cp swift_setup.sh bigdawg-postgres-swift:/bdsetup/
 docker cp swift.dump bigdawg-postgres-swift:/bdsetup/
-docker exec --user=root bigdawg-postgres-swift /bdsetup/swift_setup.sh
+docker exec --user=root bigdawg-postgres-swift /bdsetup/swift_setup.sh &>/dev/null
 
 # postgres-kepler
+echo "========================================"
+echo "===== Inserting Kepler data ====="
+echo "========================================"
+echo
 docker exec -u root bigdawg-postgres-kepler mkdir -p /bdsetup
 docker cp kepler_setup.sh bigdawg-postgres-kepler:/bdsetup/
 docker cp kepler.dump bigdawg-postgres-kepler:/bdsetup/
-docker exec --user=root bigdawg-postgres-kepler /bdsetup/kepler_setup.sh
+docker exec --user=root bigdawg-postgres-kepler /bdsetup/kepler_setup.sh &>/dev/null
 
 echo
 echo "======================================="
 echo "===== Starting BigDAWG Middleware ====="
 echo "======================================="
+echo
 docker exec -d bigdawg-postgres-swift java -classpath "istc.bigdawg-1.0-SNAPSHOT-jar-with-dependencies.jar" istc.bigdawg.Main bigdawg-postgres-swift
 docker exec -d bigdawg-postgres-kepler java -classpath "istc.bigdawg-1.0-SNAPSHOT-jar-with-dependencies.jar" istc.bigdawg.Main bigdawg-postgres-kepler
-docker exec -it bigdawg-postgres-catalog java -classpath "istc.bigdawg-1.0-SNAPSHOT-jar-with-dependencies.jar" istc.bigdawg.Main bigdawg-postgres-catalog
+docker exec -it bigdawg-postgres-catalog java -classpath "istc.bigdawg-1.0-SNAPSHOT-jar-with-dependencies.jar" istc.bigdawg.Main bigdawg-postgres-catalog | grep "Hit enter to stop it..."
 
 echo
 echo "================="
