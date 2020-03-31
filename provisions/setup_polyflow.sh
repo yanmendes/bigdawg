@@ -31,9 +31,9 @@ echo
 echo "============================="
 echo "===== Running containers====="
 echo "============================="
-docker run -d -h bigdawg-postgres-catalog --net=polyflow -p 5400:5400 -p 8080:8080 -e "PGPORT=5400" -e "BDHOST=bigdawg-postgres-catalog" --name bigdawg-postgres-catalog yanmendes/bigdawg-polyflow
-docker run -d -h bigdawg-postgres-kepler --net=polyflow -p 5401:5401 -e "PGPORT=5401" -e "BDHOST=bigdawg-postgres-kepler" --name bigdawg-postgres-kepler yanmendes/bigdawg-polyflow
-docker run -d -h bigdawg-postgres-swift --net=polyflow -p 5402:5402 -e "PGPORT=5402" -e "BDHOST=bigdawg-postgres-swift" --name bigdawg-postgres-swift yanmendes/bigdawg-polyflow
+docker run -d -h bigdawg-postgres-catalog --name=bigdawg --net=polyflow -p 5400:5400 -p 8080:8080 -e "PGPORT=5400" -e "BDHOST=bigdawg-postgres-catalog" --name bigdawg-postgres-catalog yanmendes/bigdawg-polyflow
+docker run -d -h bigdawg-postgres-kepler --name=bigdawg-postgres-kepler --net=polyflow -p 5401:5401 -e "PGPORT=5401" -e "BDHOST=bigdawg-postgres-kepler" --name bigdawg-postgres-kepler yanmendes/bigdawg-polyflow
+docker run -d -h bigdawg-postgres-swift --name=bigdawg-postgres-swift --net=polyflow -p 5402:5402 -e "PGPORT=5402" -e "BDHOST=bigdawg-postgres-swift" --name bigdawg-postgres-swift yanmendes/bigdawg-polyflow
 
 echo
 echo "========================"
