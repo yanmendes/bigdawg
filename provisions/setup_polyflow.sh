@@ -8,7 +8,7 @@
 
 echo
 echo "========================================"
-echo "===== Cleaning up old containers ====="
+echo "====== Cleaning up old containers ======"
 echo "========================================"
 
 docker rm -f bigdawg-postgres-catalog &>/dev/null
@@ -23,13 +23,13 @@ $(docker network inspect polyflow &>/dev/null) || {   docker network create poly
 
 echo
 echo "========================================"
-echo "===== Pulling images from Dockerhub====="
+echo "==== Pulling images from Dockerhub ====="
 echo "========================================"
 docker pull yanmendes/bigdawg-polyflow
 
 echo
 echo "============================="
-echo "===== Running containers====="
+echo "===== Running containers ===="
 echo "============================="
 docker run -d -h bigdawg-postgres-catalog --name=bigdawg --net=polyflow -p 5400:5400 -p 8080:8080 -e "PGPORT=5400" -e "BDHOST=bigdawg-postgres-catalog" --name bigdawg-postgres-catalog yanmendes/bigdawg-polyflow
 docker run -d -h bigdawg-postgres-kepler --name=bigdawg-postgres-kepler --net=polyflow -p 5401:5401 -e "PGPORT=5401" -e "BDHOST=bigdawg-postgres-kepler" --name bigdawg-postgres-kepler yanmendes/bigdawg-polyflow
@@ -61,7 +61,7 @@ fi
 # postgres-catalog
 echo
 echo "========================================"
-echo "===== Inserting catalog data ====="
+echo "======== Inserting catalog data ========"
 echo "========================================"
 echo
 docker exec -u root bigdawg-postgres-catalog mkdir -p /src/main/resources
@@ -71,7 +71,7 @@ docker exec bigdawg-postgres-catalog /bdsetup/setup.sh &>/dev/null
 
 # postgres-swift
 echo "========================================"
-echo "===== Inserting Swift data ====="
+echo "========= Inserting Swift data ========="
 echo "========================================"
 echo
 docker exec -u root bigdawg-postgres-swift mkdir -p /bdsetup
@@ -81,7 +81,7 @@ docker exec --user=root bigdawg-postgres-swift /bdsetup/swift_setup.sh &>/dev/nu
 
 # postgres-kepler
 echo "========================================"
-echo "===== Inserting Kepler data ====="
+echo "======== Inserting Kepler data ========="
 echo "========================================"
 echo
 docker exec -u root bigdawg-postgres-kepler mkdir -p /bdsetup
