@@ -852,7 +852,7 @@ public class PostgreSQLHandler implements RelationalHandler {
 	 * @throws SQLException
 	 */
 	public void dropDataSetIfExists(String tableName) throws SQLException {
-		executeStatementOnConnection("drop table if exists " + tableName);
+		executeStatementOnConnection(RelationalHandler.getDropTableStatement(tableName));
 	}
 
 	/**
@@ -872,11 +872,14 @@ public class PostgreSQLHandler implements RelationalHandler {
 	 * @throws NoTargetArrayException
 	 */
 	public static void createTargetTableSchema(Connection postgresCon,
-			String toTable, String createTableStatement) throws SQLException {
+			String name, String toTable, String createTableStatement) throws SQLException {
 		PostgreSQLSchemaTableName schemaTable = new PostgreSQLSchemaTableName(
 				toTable);
 		PostgreSQLHandler.executeStatement(postgresCon,
 				"create schema if not exists " + schemaTable.getSchemaName());
+		if (name != null && BigDawgConfigProperties.INSTANCE.isPostgreSQLDropDataSet()) {
+			PostgreSQLHandler.executeStatement(postgresCon, RelationalHandler.getDropTableStatement(name));
+		}
 		PostgreSQLHandler.executeStatement(postgresCon, createTableStatement);
 	}
 
