@@ -62,6 +62,13 @@
 			<version>6.0.5</version>
 		</dependency>
 
+		<!-- Vertica JDBC -->
+		<dependency>
+			<groupId>com.vertica</groupId>
+			<artifactId>vjdbc8</artifactId>
+			<version>8.0.1</version>
+		</dependency>
+
 		<!-- SQL parsing library -->
 		<dependency>
 			<groupId>com.github.jsqlparser</groupId>
