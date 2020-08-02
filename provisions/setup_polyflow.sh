@@ -96,7 +96,11 @@ echo "======================================="
 echo
 docker exec -d bigdawg-postgres-swift java -classpath "istc.bigdawg-1.0-SNAPSHOT-jar-with-dependencies.jar" istc.bigdawg.Main bigdawg-postgres-swift
 docker exec -d bigdawg-postgres-kepler java -classpath "istc.bigdawg-1.0-SNAPSHOT-jar-with-dependencies.jar" istc.bigdawg.Main bigdawg-postgres-kepler
-docker exec -it bigdawg-postgres-catalog java -classpath "istc.bigdawg-1.0-SNAPSHOT-jar-with-dependencies.jar" istc.bigdawg.Main bigdawg-postgres-catalog
+if [ -z "$DEBUG" ]; then
+    docker exec -it bigdawg-postgres-catalog java -classpath "istc.bigdawg-1.0-SNAPSHOT-jar-with-dependencies.jar" istc.bigdawg.Main bigdawg-postgres-catalog | grep "Hit enter to stop it..."
+else
+    docker exec -it bigdawg-postgres-catalog java -classpath "istc.bigdawg-1.0-SNAPSHOT-jar-with-dependencies.jar" istc.bigdawg.Main bigdawg-postgres-catalog
+fi
 
 echo
 echo "================="
